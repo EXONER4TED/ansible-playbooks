@@ -1,0 +1,2 @@
+[targets]
+alpha01 ansible_connection=local

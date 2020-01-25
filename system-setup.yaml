@@ -1,0 +1,6 @@
+---
+- hosts: all
+  tasks:
+    - name: "Upgrade All Packages"
+      apt:
+        upgrade: full
