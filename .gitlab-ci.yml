@@ -1,0 +1,10 @@
+stages:
+  - lint
+
+Ansible Lint:
+  stage: lint
+  image: python:3
+  before_script:
+    - pip3 install ansible-lint
+  script:
+    - ansible-lint system-setup.yaml
