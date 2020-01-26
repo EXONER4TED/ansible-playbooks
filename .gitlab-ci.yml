@@ -1,3 +1,4 @@
+---
 stages:
   - lint
 
@@ -8,3 +9,12 @@ Ansible Lint:
     - pip3 install ansible-lint
   script:
     - ansible-lint system-setup.yaml
+
+YAML Lint:
+  stage: lint
+  image: python:3
+  before_script:
+    - pip3 install yamllint
+  script:
+    - yamllint .gitlab-ci.yml
+    - yamllint *.yaml
