@@ -4,3 +4,53 @@
     - name: "Upgrade All Packages"
       apt:
         upgrade: full
+
+    - name: "Ensure Useful Packages Installed"
+      apt:
+        pkg:
+          - vim
+          - zsh
+          - lsof
+          - openssh-server
+
+    - name: "Figure out Python version"
+      command: python --version
+      register: python_version
+      changed_when: False
+
+    - name: "Create Python 3 Symlink"
+      file:
+        src: /usr/bin/python3
+        dest: /usr/bin/python
+        state: link
+        force: yes
+      when: python_version is search("Python 2")
+
+    - name: "Get Oh-My-ZSH Installer Script"
+      get_url:
+        url: https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+        dest: /root/oh-my-zsh-install.sh
+        mode: '0755'
+      when: ansible_facts['user_shell'] != '/usr/bin/zsh'
+
+    - name: "Run ZSH Installer"
+      command: /root/oh-my-zsh-install.sh --unattended
+      when: ansible_facts['user_shell'] != '/usr/bin/zsh'
+
+    - name: "Set root shell to ZSH"
+      user:
+        name: root
+        shell: /usr/bin/zsh
+      when: ansible_facts['user_shell'] != '/usr/bin/zsh'
+
+    - name: "Check if Oh-My-ZSH Installer Still Present"
+      stat:
+        path: /root/oh-my-zsh-install.sh
+      register: oh_my_zsh_installer
+      changed_when: False
+
+    - name: "Cleanup Oh-My-ZSH Installer Script"
+      file:
+        path: /root/oh-my-zsh-install.sh
+        state: absent
+      when: oh_my_zsh_installer.stat.exists
