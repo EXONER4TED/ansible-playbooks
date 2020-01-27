@@ -13,19 +13,6 @@
           - lsof
           - openssh-server
 
-    - name: "Figure out Python version"
-      command: python --version
-      register: python_version
-      changed_when: False
-
-    - name: "Create Python 3 Symlink"
-      file:
-        src: /usr/bin/python3
-        dest: /usr/bin/python
-        state: link
-        force: yes
-      when: python_version is search("Python 2")
-
     - name: "Get Oh-My-ZSH Installer Script"
       get_url:
         url: https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh
@@ -73,3 +60,21 @@
         src: /root/.p10k.zsh
         dest: /root/.p10k.zsh
       when: ansible_connection != 'local'
+
+    - name: "Check fzf Installed"
+      stat:
+        path: '/root/.fzf'
+      register: fzf_installed
+      changed_when: False
+
+    - name: "Clone fzf"
+      git:
+        repo: 'https://github.com/junegunn/fzf.git'
+        dest: /root/.fzf
+        version: master
+        depth: 1
+      when: not fzf_installed.stat.exists
+
+    - name: "Install fzf"
+      command: /root/.fzf/install --all
+      when: not fzf_installed.stat.exists
