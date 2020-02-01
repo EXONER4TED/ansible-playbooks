@@ -15,6 +15,7 @@
           - wget
           - openssh
           - docker-compose
+          - qemu-guest-agent
 
     - name: "Copy pacman.conf"
       copy:
@@ -87,3 +88,9 @@
     - name: "Install fzf"
       command: /root/.fzf/install --all
       when: not fzf_installed.stat.exists
+
+    - name: "Start/Enable qemu-guest-agent"
+      systemd:
+        name: qemu-ga
+        state: started
+        enabled: true
