@@ -2,16 +2,25 @@
 - hosts: all
   tasks:
     - name: "Upgrade All Packages"
-      apt:
-        upgrade: full
+      pacman:
+        update_cache: yes
+        upgrade: yes
 
     - name: "Ensure Useful Packages Installed"
-      apt:
+      pacman:
         pkg:
           - vim
           - zsh
           - lsof
-          - openssh-server
+          - wget
+          - openssh
+          - docker-compose
+
+    - name: "Copy pacman.conf"
+      copy:
+        src: /etc/pacman.conf
+        dest: /etc/pacman.conf
+      when: ansible_connection != 'local'
 
     - name: "Get Oh-My-ZSH Installer Script"
       get_url:
