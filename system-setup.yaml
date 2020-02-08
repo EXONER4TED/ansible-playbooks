@@ -95,3 +95,9 @@
         name: qemu-ga
         state: started
         enabled: true
+
+    - name: "Copy .vimrc"
+      copy:
+        src: /root/.vimrc
+        dest: /root/.vimrc
+      when: ansible_connection != 'local'
