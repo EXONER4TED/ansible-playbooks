@@ -1,20 +1,28 @@
 ---
 stages:
   - lint
+  - analysis
 
 Ansible Lint:
   stage: lint
-  image: python:3
-  before_script:
-    - pip3 install ansible-lint
+  image: sdesbure/ansible-lint
   script:
     - ansible-lint system-setup.yaml
 
 YAML Lint:
   stage: lint
-  image: python:3
-  before_script:
-    - pip3 install yamllint
+  image: sdesbure/yamllint
   script:
-    - yamllint .gitlab-ci.yml
-    - yamllint *.yaml
+    - yamllint *.y?ml
+
+SonarQube Scan:
+  stage: analysis
+  image: leppinger/golang-sonarqube-coverage:latest
+  script:
+    - sonar-scanner
+      -D"sonar.projectKey=Ansible"
+      -D"sonar.sources=."
+      -D"sonar.host.url=https://sonar.thebonds.tech"
+      -D"sonar.login=$SONAR_TOKEN"
+  only:
+    - master
