@@ -15,6 +15,7 @@
           - wget
           - rsync
           - openssh
+          - fail2ban
           - docker-compose
           - qemu-guest-agent
 
@@ -53,17 +54,17 @@
         state: absent
       when: oh_my_zsh_installer.stat.exists
 
-    - name: "Install typewritten ZSH Theme"
+    - name: "Install spaceship ZSH Theme"
       git:
-        repo: 'https://github.com/reobin/typewritten.git'
-        dest: /root/.oh-my-zsh/custom/themes/typewritten
+        repo: 'https://github.com/denysdovhan/spaceship-prompt.git'
+        dest: /root/.oh-my-zsh/custom/themes/spaceship-prompt
         version: master
         depth: 1
 
-    - name: "Symlink for typewritten ZSH Theme"
+    - name: "Symlink for spaceship ZSH Theme"
       file:
-        src: /root/.oh-my-zsh/custom/themes/typewritten/typewritten.zsh-theme
-        dest: /root/.oh-my-zsh/custom/themes/typewritten.zsh-theme
+        src: /root/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme
+        dest: /root/.oh-my-zsh/custom/themes/spaceship.zsh-theme
         state: link
 
     - name: "Copy .zshrc"
@@ -95,6 +96,13 @@
         name: qemu-ga
         state: started
         enabled: true
+
+    - name: "Start/Enable fail2ban"
+      systemd:
+        name: fail2ban
+        state: started
+        enabled: true
+
 
     - name: "Copy .vimrc"
       copy:
