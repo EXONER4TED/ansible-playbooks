@@ -2,7 +2,7 @@
 
 name: Ansible Lint  # feel free to pick your own name
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   lint:
