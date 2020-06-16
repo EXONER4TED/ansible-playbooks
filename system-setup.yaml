@@ -18,12 +18,27 @@
           - fail2ban
           - docker-compose
           - qemu-guest-agent
+      when: ansible_distribution == 'Arch' 
+
+    - name: "Ensure Useful Packages Installed"
+      pacman:
+        pkg:
+          - vim
+          - zsh
+          - lsof
+          - wget
+          - rsync
+          - openssh
+          - fail2ban
+          - docker-compose
+          - qemu-guest-agent
+      when: ansible_distribution == 'OpenSUSE' 
 
     - name: "Copy pacman.conf"
       copy:
         src: /etc/pacman.conf
         dest: /etc/pacman.conf
-      when: ansible_connection != 'local'
+      when: ansible_connection != 'local' and ansible_distribution == 'Arch' 
 
     - name: "Get Oh-My-ZSH Installer Script"
       get_url:
@@ -102,7 +117,6 @@
         name: fail2ban
         state: started
         enabled: true
-
 
     - name: "Copy .vimrc"
       copy:
