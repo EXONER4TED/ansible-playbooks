@@ -1,12 +1,19 @@
 ---
 - hosts: all
   tasks:
-    - name: "Upgrade All Packages"
+
+    - name: "Upgrade All Packages - Arch"
       pacman:
         update_cache: yes
         upgrade: yes
+      when: ansible_facts['distribution'] == 'Arch Linux'
 
-    - name: "Ensure Useful Packages Installed"
+    - name: "Upgrade All Packages - OpenSUSE"
+      zypper:
+        name: '*'
+        update_cache: yes
+
+    - name: "Ensure Useful Packages Installed - Arch"
       pacman:
         pkg:
           - vim
@@ -18,9 +25,9 @@
           - fail2ban
           - docker-compose
           - qemu-guest-agent
-      when: ansible_distribution == 'Arch'
+      when: ansible_facts['distribution'] == 'Arch Linux'
 
-    - name: "Ensure Useful Packages Installed"
+    - name: "Ensure Useful Packages Installed - OpenSUSE"
       zypper:
         name:
           - vim
@@ -32,14 +39,14 @@
           - fail2ban
           - docker-compose
           - qemu-guest-agent
-      update_cache: yes
-      when: ansible_distribution == 'OpenSUSE'
+        update_cache: yes
+      when: ansible_facts['distribution'] == 'openSUSE Leap'
 
     - name: "Copy pacman.conf"
       copy:
         src: /etc/pacman.conf
         dest: /etc/pacman.conf
-      when: ansible_connection != 'local' and ansible_distribution == 'Arch'
+      when: ansible_connection != 'local' and ansible_facts['distribution'] == 'Arch Linux'
 
     - name: "Get Oh-My-ZSH Installer Script"
       get_url:
@@ -112,7 +119,7 @@
         name: qemu-ga
         state: started
         enabled: true
-      when: ansible_distribution == 'Arch'
+      when: ansible_facts['distribution'] == 'Arch Linux'
 
     - name: "Start/Enable fail2ban"
       systemd:
