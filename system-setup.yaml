@@ -20,10 +20,9 @@
           - qemu-guest-agent
       when: ansible_distribution == 'Arch'
 
-
     - name: "Ensure Useful Packages Installed"
-      pacman:
-        pkg:
+      zypper:
+        name:
           - vim
           - zsh
           - lsof
@@ -33,6 +32,7 @@
           - fail2ban
           - docker-compose
           - qemu-guest-agent
+      update_cache: yes
       when: ansible_distribution == 'OpenSUSE'
 
     - name: "Copy pacman.conf"
@@ -112,6 +112,7 @@
         name: qemu-ga
         state: started
         enabled: true
+      when: ansible_distribution == 'Arch'
 
     - name: "Start/Enable fail2ban"
       systemd:
